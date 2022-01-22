@@ -5,6 +5,8 @@ const grpc = require('grpc');
 const config = require('./knexfile.js');
 const knex = require('knex')(config);
 
+const { uuid } = require('uuidv4');
+
 // grpc service definition
 const postProtoPath = path.join(__dirname, 'protos', 'post.proto');
 const postProtoDefinition = protoLoader.loadSync(postProtoPath);
@@ -40,8 +42,17 @@ function getPost(call, callback) {
 
 function createPost(call, callback) {
     knex('co_posts')
+        // test for null values
         .insert({
-
+            id: uuid(),
+            ...call.request.description ? { description: call.request.description } : {},
+            ...call.request.type ? { type: call.request.type } : {},
+            ...call.request.status ? { status: call.request.status } : {},
+            ...call.request.impacter_id ? { impacter_id: call.request.impacter_id } : {},
+            ...call.request.reaction_count ? { reaction_count: call.request.reaction_count } : {},
+            ...call.request.data ? { data: call.request.data } : {},
+            created_at: Date.now(),
+            updated_at: Date.now()
         })
         .returning()
         .then((data) => {
@@ -57,7 +68,13 @@ function updatePost(call, callback) {
     knex('co_posts')
         .where({ id: parseInt(call.request.id) })
         .update({
-
+            ...call.request.description ? { description: call.request.description } : {},
+            ...call.request.type ? { type: call.request.type } : {},
+            ...call.request.status ? { status: call.request.status } : {},
+            ...call.request.impacter_id ? { impacter_id: call.request.impacter_id } : {},
+            ...call.request.reaction_count ? { reaction_count: call.request.reaction_count } : {},
+            ...call.request.data ? { data: call.request.data } : {},
+            updated_at: Date.now()
         })
         .returning()
         .then((data) => {
@@ -69,6 +86,17 @@ function updatePost(call, callback) {
         });
 }
 function deletePost(call, callback) {
+    knex('co_posts')
+        .where({ id: parseInt(call.request.id) })
+        .delete()
+        .returning()
+        .then((data) => {
+            if (data) {
+                callback(null, { status: 'success' });
+            } else {
+                callback('no post for the given post id found.');
+            }
+        });
 }
 
 function main() {
