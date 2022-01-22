@@ -1,9 +1,6 @@
 syntax = "proto3";
 package post;
 
-import "google/protobuf/struct.proto";
-
-
 service PostService {
   rpc getAllPosts(Empty) returns (PostList) {}
   rpc getAllPostsByImpacterId(ImpacterId) returns (PostList) {}
@@ -11,6 +8,18 @@ service PostService {
   rpc CreatePost(NewPost) returns (Post) {}
   rpc UpdatePost(Post) returns (Result) {}
   rpc deletePost(PostId) returns (Result) {}
+}
+
+message Media {
+  string image = 1;
+  int32 width = 2;
+  int32 height = 3;
+  string version = 4;
+  string description = 5;
+}
+
+message Data {
+  repeated Media media = 1;
 }
 
 message Empty {}
@@ -36,7 +45,7 @@ message Post {
   int32 reaction_count = 6;
   string created_at = 7;
   string updated_at = 8;
-  .google.protobuf.Struct data = 9;
+  Data data = 9;
 }
 
 message NewPost {
@@ -45,7 +54,7 @@ message NewPost {
     string status = 4;
     int32 impacter_id = 5;
     string reaction_count = 6;
-    .google.protobuf.Struct data = 7;
+    Data data = 9;
 }
 
 message Result {

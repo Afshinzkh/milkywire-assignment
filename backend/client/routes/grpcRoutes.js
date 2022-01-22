@@ -2,6 +2,7 @@
 const path = require('path');
 const protoLoader = require('@grpc/proto-loader');
 const grpc = require('@grpc/grpc-js');
+const { parseSync } = require('yargs');
 
 
 // grpc client definition
@@ -37,6 +38,7 @@ const getPost = (req, res) => {
             res.json('That Post does not exist.');
         } else {
             console.log(result)
+
             res.json(result);
         }
     });

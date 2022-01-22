@@ -9,7 +9,7 @@ const { uuid } = require('uuidv4');
 
 // grpc service definition
 const postProtoPath = path.join(__dirname, '..', 'protos', 'post.proto');
-const postProtoDefinition = protoLoader.loadSync(postProtoPath, { keepCase: true });
+const postProtoDefinition = protoLoader.loadSync(postProtoPath, { keepCase: true, json: true, arrays: true });
 const postPackageDefinition = grpc.loadPackageDefinition(postProtoDefinition).post;
 
 // knex queries
@@ -37,6 +37,7 @@ function getPost(call, callback) {
         .where({ post_id: parseInt(call.request.post_id) })
         .then((data) => {
             if (data.length) {
+                console.log(data[0].data.media)
                 callback(null, data[0]);
             } else {
                 callback('no post for the given post id found.');
