@@ -1,5 +1,5 @@
 {
-  "name": "impacter-posts-backend",
+  "name": "impacter-posts-grpc-sever",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,9 +12,9 @@
   "keywords": [],
   "author": "",
   "dependencies": {
+    "@grpc/grpc-js": "^1.5.3",
     "@grpc/proto-loader": "^0.6.9",
     "google-protobuf": "^3.19.3",
-    "grpc": "^1.24.7",
     "knex": "^1.0.1",
     "lorem-ipsum": "^2.0.4",
     "pg": "^8.7.1",

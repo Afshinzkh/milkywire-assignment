@@ -1,6 +1,6 @@
 const path = require('path');
 const protoLoader = require('@grpc/proto-loader');
-const grpc = require('grpc');
+const grpc = require('@grpc/grpc-js');
 
 const config = require('./knexfile.js');
 const knex = require('knex')(config);
@@ -9,15 +9,19 @@ const { uuid } = require('uuidv4');
 
 // grpc service definition
 const postProtoPath = path.join(__dirname, '..', 'protos', 'post.proto');
-const postProtoDefinition = protoLoader.loadSync(postProtoPath);
+const postProtoDefinition = protoLoader.loadSync(postProtoPath, { keepCase: true });
 const postPackageDefinition = grpc.loadPackageDefinition(postProtoDefinition).post;
 
 // knex queries
-function getAllPosts(call, callback) {
+function getAllPostss(call, callback) {
     knex('co_posts')
-        .then((data) => { callback(null, { posts: data }); });
+        .then((data) => {
+            console.log([data[0]])
+            callback(null, { posts: data });
+        });
 }
 function getAllPostsByImpacterId(call, callback) {
+    console.log(call.request)
     knex('co_posts')
         .where({ impacter_id: parseInt(call.request.impacter_id) })
         .then((data) => {
@@ -30,7 +34,7 @@ function getAllPostsByImpacterId(call, callback) {
 }
 function getPost(call, callback) {
     knex('co_posts')
-        .where({ id: parseInt(call.request.id) })
+        .where({ post_id: parseInt(call.request.post_id) })
         .then((data) => {
             if (data.length) {
                 callback(null, data[0]);
@@ -103,7 +107,7 @@ function main() {
     const server = new grpc.Server();
     // gRPC service
     server.addService(postPackageDefinition.PostService.service, {
-        getAllPosts: getAllPosts,
+        getAllPosts: getAllPostss,
         getAllPostsByImpacterId: getAllPostsByImpacterId,
         getPost: getPost,
         createPost: createPost,
@@ -112,9 +116,17 @@ function main() {
     });
 
     // gRPC server
-    server.bind('localhost:50051', grpc.ServerCredentials.createInsecure()); // add authentication
-    server.start();
-    console.log('gRPC server running at http://127.0.0.1:50051');
+    server.bindAsync(
+        'localhost:50051',
+        grpc.ServerCredentials.createInsecure(),
+        (err, port) => {
+            if (err != null) {
+                return console.error(err);
+            }
+            server.start();
+            console.log(`gRPC listening on ${port}`)
+        }
+    );
 }
 
 main();
