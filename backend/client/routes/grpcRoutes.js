@@ -10,7 +10,7 @@ const postProtoDefinition = protoLoader.loadSync(postProtoPath, { keepCase: true
 const postPackageDefinition = grpc.loadPackageDefinition(postProtoDefinition).post;
 
 const client = new postPackageDefinition.PostService(
-    'localhost:50051', grpc.credentials.createInsecure());
+    'grpc-server:50051', grpc.credentials.createInsecure());
 
 // handlers
 const getAllPosts = (req, res) => {

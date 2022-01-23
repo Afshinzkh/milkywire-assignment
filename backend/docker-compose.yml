@@ -1,13 +1,14 @@
 version: '3'
 services:
-  postgreSQL:
+  grpc-db:
     image: sameersbn/postgresql:10
-    container_name: impacter-posts-db
+    container_name: grpc-db
     restart: always
+    network_mode: bridge
     volumes:
       - postgresql:/var/lib/postgresql
     ports:
-      - "5435:5432"
+      - "5432:5432"
     environment:
       - DEBUG=false
       - DB_USER=dev
@@ -15,5 +16,31 @@ services:
       - DB_NAME=impacter-posts-dev
       - PG_PASSWORD=dev
 
+  grpc-server:
+    container_name: grpc-server
+    network_mode: bridge
+    links:
+      - grpc-db
+    volumes:
+      - "./protos:/protos:rw"
+    build:
+      context: ./server
+    depends_on:
+      - grpc-db
+
+  grpc-client:
+    container_name: grpc-client
+    network_mode: bridge
+    links:
+      - grpc-server
+    volumes:
+      - "./protos:/protos:rw"
+    build:
+      context: ./client
+    depends_on:
+      - grpc-db
+    ports:
+      - "3000:3000"
+
 volumes:
-  postgresql: 
+  postgresql:

@@ -13,6 +13,12 @@ const getAllPosts = (call, callback) => {
                     message: "No Posts found on the table",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 };
 
@@ -28,10 +34,17 @@ const getAllPostsByImpacterId = (call, callback) => {
                     message: "Post Not Found for the given impact id",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 };
 
 const getPost = (call, callback) => {
+    console.log("getting")
     knex('co_posts')
         .where({ post_id: parseInt(call.request.post_id) })
         .then((data) => {
@@ -43,6 +56,12 @@ const getPost = (call, callback) => {
                     message: "Post Not Found",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 };
 
@@ -58,7 +77,6 @@ const createPost = (call, callback) => {
         created_at: new Date().toUTCString(),
         updated_at: new Date().toUTCString()
     }
-    console.log(response)
     knex('co_posts')
         .insert(response)
         .returning()
@@ -67,10 +85,16 @@ const createPost = (call, callback) => {
                 callback(null, response);
             } else {
                 callback({
-                    code: grpc.status.INTERNAL,
+                    code: grpc.status.UNKNOWN,
                     message: "post creation failed, check logs!",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 };
 
@@ -96,6 +120,12 @@ const updatePost = (call, callback) => {
                     message: "post update failed, check logs!",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 };
 
@@ -113,6 +143,12 @@ const deletePost = (call, callback) => {
                     message: "Post Not Found",
                 });
             }
+        }).catch((err) => {
+            console.log(err)
+            callback({
+                code: grpc.status.UNIMPLEMENTED,
+                message: "unknown error",
+            });
         });
 }
 

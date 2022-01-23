@@ -22,7 +22,7 @@ function main() {
 
     // gRPC server
     server.bindAsync(
-        'localhost:50051',
+        '0.0.0.0:50051',
         grpc.ServerCredentials.createInsecure(),
         (err, port) => {
             if (err != null) {

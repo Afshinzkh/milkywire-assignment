@@ -1,7 +1,9 @@
 ## TODOS
-- add swagger documentaion
-- add unit tests
-- possible authentication scenarios
+- Automation 
+- Swagger documentaion
+- Unit tests
+- Possible authentication scenarios
+- Linting and best practices implementation
 ## Assignment
 
 The system needs a basic API to handle posts.
