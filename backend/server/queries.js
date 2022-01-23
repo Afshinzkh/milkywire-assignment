@@ -5,7 +5,14 @@ const grpc = require('@grpc/grpc-js');
 const getAllPosts = (call, callback) => {
     knex('co_posts')
         .then((data) => {
-            callback(null, { posts: data });
+            if (data.length) {
+                callback(null, { posts: data });
+            } else {
+                callback({
+                    code: grpc.status.NOT_FOUND,
+                    message: "No Posts found on the table",
+                });
+            }
         });
 };
 
@@ -16,7 +23,10 @@ const getAllPostsByImpacterId = (call, callback) => {
             if (data.length) {
                 callback(null, { posts: data });
             } else {
-                callback('no post for the given impacter id found.');
+                callback({
+                    code: grpc.status.NOT_FOUND,
+                    message: "Post Not Found for the given impact id",
+                });
             }
         });
 };
@@ -56,7 +66,10 @@ const createPost = (call, callback) => {
             if (data.rowCount == 1) {
                 callback(null, response);
             } else {
-                callback('failed to create new post.');
+                callback({
+                    code: grpc.status.INTERNAL,
+                    message: "post creation failed, check logs!",
+                });
             }
         });
 };
@@ -78,7 +91,10 @@ const updatePost = (call, callback) => {
             if (data) {
                 callback(null, { status: 'success' });
             } else {
-                callback('no post for the given post id found.');
+                callback({
+                    code: grpc.status.INTERNAL,
+                    message: "post update failed, check logs!",
+                });
             }
         });
 };
@@ -92,7 +108,10 @@ const deletePost = (call, callback) => {
             if (data) {
                 callback(null, { status: 'success' });
             } else {
-                callback('no post for the given post id found.');
+                callback({
+                    code: grpc.status.NOT_FOUND,
+                    message: "Post Not Found",
+                });
             }
         });
 }
