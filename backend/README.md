@@ -1,3 +1,7 @@
+## TODOS
+- add swagger documentaion
+- add unit tests
+- possible authentication scenarios
 ## Assignment
 
 The system needs a basic API to handle posts.
