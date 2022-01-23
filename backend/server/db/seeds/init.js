@@ -2,7 +2,7 @@ const loremIpsum = require("lorem-ipsum").loremIpsum;
 const https = require("https");
 
 function wait(timeToWait) {
-  return new Promise(function(resolve) {
+  return new Promise(function (resolve) {
     setTimeout(resolve, timeToWait);
   });
 }
@@ -23,7 +23,7 @@ function get(url) {
             body = JSON.parse(body);
             resolve(body);
           } catch (error) {
-            console.log("Parse error", body);
+            console.error("Parse error", body);
           }
         }
       });
@@ -80,14 +80,14 @@ async function createPosts(knex, impacters, numberOfPostsPerImpacter) {
           impacter_id: id
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
     await knex("co_posts").insert(posts);
   }
 }
 
-exports.seed = async function(knex) {
+exports.seed = async function (knex) {
   const numberOfImpacters = 19;
   const numberOfPostsPerImpacter = 40;
   // Deletes ALL existing entries

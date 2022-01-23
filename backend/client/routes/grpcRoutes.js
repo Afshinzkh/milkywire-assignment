@@ -2,7 +2,6 @@
 const path = require('path');
 const protoLoader = require('@grpc/proto-loader');
 const grpc = require('@grpc/grpc-js');
-const { parseSync } = require('yargs');
 
 
 // grpc client definition
@@ -22,7 +21,6 @@ const getAllPosts = (req, res) => {
 };
 const getAllPostsByImpacterId = (req, res) => {
     const payload = { impacter_id: parseInt(req.params.impacter_id) };
-    console.log(req)
     client.getAllPostsByImpacterId(payload, (err, result) => {
         if (err) {
             res.json('That Post does not exist for impacter Id.');
@@ -35,35 +33,44 @@ const getPost = (req, res) => {
     const payload = { post_id: parseInt(req.params.post_id) };
     client.getPost(payload, (err, result) => {
         if (err) {
-            res.json('That Post does not exist.');
+            const status = err.code === grpc.status.NOT_FOUND ? 404 : 500;
+            return res.status(status).send({
+                message: err.details
+            });
         } else {
-            console.log(result)
-
             res.json(result);
         }
     });
 };
+
 const createPost = (req, res) => {
     const payload = {
         type: req.body.type,
         description: req.body.description,
         status: req.body.status,
-        impacter_id: parseInt(req.params.impacter_id),
-        reaction_count: parseInt(req.params.reaction_count),
+        impacter_id: parseInt(req.body.impacter_id),
+        reaction_count: parseInt(req.body.reaction_count),
         data: req.body.data,
     };
     client.createPost(payload, (err, result) => {
-        res.json(result);
+        if (err) {
+            return res.status(result.code).send({
+                message: result.message
+            });
+        } else {
+            res.json(result);
+        }
     });
 };
+
 const updatePost = (req, res) => {
     const payload = {
-        id: parseInt(req.params.id),
+        post_id: parseInt(req.params.post_id),
         type: req.body.type,
         description: req.body.description,
         status: req.body.status,
-        impacter_id: parseInt(req.params.impacter_id),
-        reaction_count: parseInt(req.params.reaction_count),
+        impacter_id: parseInt(req.body.impacter_id),
+        reaction_count: parseInt(req.body.reaction_count),
         data: req.body.data,
     };
     client.updatePost(payload, (err, result) => {
@@ -74,8 +81,9 @@ const updatePost = (req, res) => {
         }
     });
 };
+
 const deletePost = (req, res) => {
-    const payload = { id: parseInt(req.params.id) };
+    const payload = { post_id: parseInt(req.params.post_id) };
 
     client.deletePost(payload, (err, result) => {
         if (err) {

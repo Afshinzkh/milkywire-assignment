@@ -2,14 +2,68 @@ syntax = "proto3";
 package post;
 
 service PostService {
-  rpc getAllPosts(Empty) returns (PostList) {}
-  rpc getAllPostsByImpacterId(ImpacterId) returns (PostList) {}
-  rpc getPost(PostId) returns (Post) {}
-  rpc CreatePost(NewPost) returns (Post) {}
-  rpc UpdatePost(Post) returns (Result) {}
-  rpc deletePost(PostId) returns (Result) {}
+  rpc getAllPosts(getAllPostsRequest) returns (PostListResponse) {}
+  rpc getAllPostsByImpacterId(getAllPostsByImpacterIdRequest) returns (PostListResponse) {}
+  rpc getPost(GetPostRequest) returns (PostResponse) {}
+  rpc CreatePost(CreatePostRequest) returns (PostResponse) {}
+  rpc UpdatePost(UpdatePostRequest) returns (StatusResponse) {}
+  rpc deletePost(DeletePostRequest) returns (StatusResponse) {}
 }
 
+// Requests
+message getAllPostsRequest {}
+message getAllPostsByImpacterIdRequest {
+  int32 impacter_id = 1;
+}
+
+message GetPostRequest {
+  int32 post_id = 1;
+}
+
+message CreatePostRequest {
+  string description = 1;
+  string type = 2;
+  string status = 3;
+  int32 impacter_id = 4;
+  string reaction_count = 5;
+  Data data = 6;
+}
+
+message UpdatePostRequest {
+  int32 post_id=1;
+  string description = 2;
+  string type = 3;
+  string status = 4;
+  int32 impacter_id = 5;
+  int32 reaction_count = 6;
+  Data data = 7;
+}
+message DeletePostRequest {
+  int32 post_id = 1;
+}
+
+// Responses
+message PostListResponse {
+  repeated PostResponse posts = 1;
+}
+
+message PostResponse {
+  int32 post_id = 1;
+  string description = 2;
+  string type = 3;
+  string status = 4;
+  int32 impacter_id = 5;
+  int32 reaction_count = 6;
+  string created_at = 7;
+  string updated_at = 8;
+  Data data = 9;
+}
+
+message StatusResponse {
+  string status = 1;
+}
+
+// Objects
 message Media {
   string image = 1;
   int32 width = 2;
@@ -22,41 +76,8 @@ message Data {
   repeated Media media = 1;
 }
 
-message Empty {}
 
-message PostList {
-  repeated Post posts = 1;
-}
 
-message ImpacterId {
-  int32 impacter_id = 1;
-}
 
-message PostId {
-    int32 post_id = 1;
-}
 
-message Post {
-  int32 post_id = 1;
-  string description = 2;
-  string type = 3;
-  string status = 4;
-  int32 impacter_id = 5;
-  int32 reaction_count = 6;
-  string created_at = 7;
-  string updated_at = 8;
-  Data data = 9;
-}
 
-message NewPost {
-    string description = 2;
-    string type = 3;
-    string status = 4;
-    int32 impacter_id = 5;
-    string reaction_count = 6;
-    Data data = 9;
-}
-
-message Result {
-    string status = 1;
-}
